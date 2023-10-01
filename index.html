@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Loan Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('photo.jpg'); /* Add your background image URL here */
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8); /* Add a semi-transparent white background */
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        form {
+            background-color: rgba(255, 255, 255, 0.9); /* Add a semi-transparent white background */
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .input-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .input-row label,
+        .input-row input {
+            flex: 1;
+        }
+
+        label {
+            text-align: left;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        h2 {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+            background-color: rgba(255, 255, 255, 0.9); /* Add a semi-transparent white background */
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        /* Share button styles */
+        #shareButton {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+            text-align: center;
+            text-decoration: none;
+            margin-top: 20px;
+        }
+
+        #shareButton:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Loan Calculator</h1>
+        <form id="loanForm">
+            <!-- Your input fields here -->
+            <div class="input-row">
+                <label for="interestRate">Interest Rate (in rupees):</label>
+                <input type="text" id="interestRate" required>
+            </div>
+
+            <div class="input-row">
+                <label for="principal">Principal Amount:</label>
+                <input type="number" id="principal" required>
+            </div>
+
+            <div class="input-row">
+                <label for="installments">Number of Installments:</label>
+                <input type="number" id="installments" required>
+            </div>
+
+            <div class="input-row">
+                <label for="monthlyPayment">Monthly Installment:</label>
+                <input type="number" id="monthlyPayment" required>
+            </div>
+
+            <input type="submit" value="Calculate">
+        </form>
+
+        <h2>Loan Details:</h2>
+        <table id="loanDetailsTable">
+            <thead>
+                <tr>
+                    <th>Installment</th>
+                    <th>Principal</th>
+                    <th>Interest</th>
+                    <th>Remaining Principal</th>
+                </tr>
+            </thead>
+            <tbody id="loanDetailsBody"></tbody>
+        </table>
+
+        <!-- Share button to open WhatsApp with table photo -->
+        <a id="shareButton" href="javascript:void(0);">Share Table</a>
+    </div>
+
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script>
+        // Function to capture and open WhatsApp with table photo
+        function shareTable() {
+            // Capture the table as an image using html2canvas
+            html2canvas(document.getElementById("loanDetailsTable")).then(function (canvas) {
+                // Convert the canvas to a data URL
+                var screenshotUrl = canvas.toDataURL("image/png");
+
+                // Create a WhatsApp sharing link with the screenshot
+                var whatsappLink = "https://wa.me/?text=Loan%20Details&data-image=" + screenshotUrl;
+
+                // Open the WhatsApp sharing link in a new window
+                window.open(whatsappLink, "_blank");
+            });
+        }
+
+        // Add a click event listener to the Share button
+        document.getElementById("shareButton").addEventListener("click", shareTable);
+
+        // Function to calculate and display loan details
+        document.getElementById("loanForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            // Get user inputs
+            var interestRate = parseFloat(document.getElementById("interestRate").value);
+            var principal = parseFloat(document.getElementById("principal").value);
+            var installments = parseInt(document.getElementById("installments").value);
+            var monthlyPayment = parseFloat(document.getElementById("monthlyPayment").value);
+
+            var loanDetails = [];
+
+            for (var i = 0; i < installments; i++) {
+                var interest = principal * (interestRate / 100);
+                var principalPayment = monthlyPayment - interest;
+                principal -= principalPayment;
+
+                loanDetails.push({
+                    installment: i + 1,
+                    principalPayment: principalPayment.toFixed(2),
+                    interest: interest.toFixed(2),
+                    remainingPrincipal: principal.toFixed(2)
+                });
+            }
+
+            // Display loan details in the table
+            var loanDetailsTable = document.getElementById("loanDetailsTable");
+            var loanDetailsBody = document.getElementById("loanDetailsBody");
+
+            loanDetailsBody.innerHTML = "";
+
+            loanDetails.forEach(function (detail) {
+                var row = loanDetailsBody.insertRow();
+                var cell1 = row.insertCell(0);
+                var cell2 = row.insertCell(1);
+                var cell3 = row.insertCell(2);
+                var cell4 = row.insertCell(3);
+
+                cell1.innerHTML = detail.installment;
+                cell2.innerHTML = detail.principalPayment;
+                cell3.innerHTML = detail.interest;
+                cell4.innerHTML = detail.remainingPrincipal;
+            });
+        });
+    </script>
+</body>
+</html>
+
