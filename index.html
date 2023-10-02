@@ -202,6 +202,9 @@
             var monthlyPayment = parseFloat(document.getElementById("monthlyPayment").value);
 
             var loanDetails = [];
+            var totalPrincipal = 0;
+            var totalInterest = 0;
+            var totalRemainingPrincipal = 0;
 
             for (var i = 0; i < installments; i++) {
                 var interest = principal * (interestRate / 100);
@@ -214,6 +217,10 @@
                     interest: interest.toFixed(2),
                     remainingPrincipal: principal.toFixed(2)
                 });
+
+                totalPrincipal += parseFloat(principalPayment.toFixed(2));
+                totalInterest += parseFloat(interest.toFixed(2));
+                totalRemainingPrincipal += parseFloat(principal.toFixed(2));
             }
 
             // Display loan details in the table
@@ -234,8 +241,19 @@
                 cell3.innerHTML = detail.interest;
                 cell4.innerHTML = detail.remainingPrincipal;
             });
+
+            // Add the row for totals
+            var totalRow = loanDetailsBody.insertRow();
+            var totalCell1 = totalRow.insertCell(0);
+            var totalCell2 = totalRow.insertCell(1);
+            var totalCell3 = totalRow.insertCell(2);
+            var totalCell4 = totalRow.insertCell(3);
+
+            totalCell1.innerHTML = "Total";
+            totalCell2.innerHTML = totalPrincipal.toFixed(2);
+            totalCell3.innerHTML = totalInterest.toFixed(2);
+            totalCell4.innerHTML = totalRemainingPrincipal.toFixed(2);
         });
     </script>
 </body>
 </html>
-
